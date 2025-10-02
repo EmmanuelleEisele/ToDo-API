@@ -1,14 +1,16 @@
 // importation des variables d'environnement
 import dotenv from "dotenv";
 import express from "express";
-import router from "./src/routers/taskRouter.js"; 
+import taskRouter from "./src/routers/taskRouter.js";
+import authRouter from "./src/routers/authRouter.js"; 
 import cors from "cors";
 import connectDB from './db.js';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
-dotenv.config();
 // Connexion à la base de données
 connectDB();
 

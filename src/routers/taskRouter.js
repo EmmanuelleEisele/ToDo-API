@@ -1,12 +1,12 @@
 import { Router } from "express";
-
+import { taskController } from "../controllers/taskController.js";
 
 const router = Router();
 
 // Routes protégées
-//router.get("/", auth, getTasks);        
-//router.post("/", auth, createTask);     
-//router.put("/:id", auth, updateTask);   
-//router.delete("/:id", auth, deleteTask);
+router.get("/", taskController.getTasks);
+router.post("/", taskController.createTask);
+router.put("/:id", taskController.updateTask);
+router.delete("/:id", taskController.deleteTask);
 
 export default router;
