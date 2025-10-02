@@ -1,12 +1,17 @@
 // importation des variables d'environnement
-import 'dotenv/config';
-
+import dotenv from "dotenv";
 import express from "express";
 import router from "./src/routers/taskRouter.js"; 
 import cors from "cors";
+import connectDB from './db.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
+
+dotenv.config();
+// Connexion à la base de données
+connectDB();
+
 
 app.use(cors({
   origin: [
@@ -24,7 +29,8 @@ app.use(cors({
 
 
 app.use(express.json());
-app.use(router);
+app.use('/auth', authRouter);
+app.use('/tasks', taskRouter);
 
 app.get("/", (req, res) => {
   res.json({ 
