@@ -1,0 +1,21 @@
+{
+  "name": "todo-api",
+  "version": "1.0.0",
+  "description": "Une API pour créer une todo list. MongoDB x Mongoose .",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EmmanuelleEisele/ToDo-API.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/EmmanuelleEisele/ToDo-API/issues"
+  },
+  "homepage": "https://github.com/EmmanuelleEisele/ToDo-API#readme"
+}
