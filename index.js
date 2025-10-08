@@ -7,12 +7,15 @@ import authRouter from "./src/routers/authRouter.js";
 import cors from "cors";
 import connectDB from './db.js';
 import { globalErrorHandler } from './src/middlewares/errorHandler.js';
-import { AppError } from './src/errors/AppError.js';
+import { swaggerDocs } from "./src/config/swagger.js";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
+
+swaggerDocs(app);
+
 
 // Connexion à la base de données (seulement en prod/dev, pas en test)
 if (process.env.NODE_ENV !== 'test') {
