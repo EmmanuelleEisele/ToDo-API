@@ -6,6 +6,7 @@ const router = Router();
 
 // Routes protégées
 router.get("/", auth, taskController.getTasks);
+router.get("/:id", auth, taskController.getTaskById);
 router.post("/", auth, taskController.createTask);
 router.put("/:id", auth, taskController.updateTask);
 router.delete("/:id", auth, taskController.deleteTask);

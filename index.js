@@ -6,6 +6,8 @@ import taskRouter from "./src/routers/taskRouter.js";
 import authRouter from "./src/routers/authRouter.js"; 
 import cors from "cors";
 import connectDB from './db.js';
+import { globalErrorHandler } from './src/middlewares/errorHandler.js';
+import { AppError } from './src/errors/AppError.js';
 
 dotenv.config();
 
@@ -45,6 +47,9 @@ app.get("/", (req, res) => {
     message: "Bienvenue sur l’API To-Do ✅. Que la force soit avec toi apprenti dev ! 🚀"
   });
 });
+
+// Middleware de gestion d'erreurs (doit être en dernier)
+app.use(globalErrorHandler);
 
 // Démarrer le serveur seulement si on n'est pas en mode test
 if (process.env.NODE_ENV !== 'test') {

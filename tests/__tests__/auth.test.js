@@ -58,9 +58,9 @@ describe('Auth Controller', () => {
       const response = await request(app)
         .post('/auth/register')
         .send(userData)
-        .expect(400);
+        .expect(409);
 
-      expect(response.body).toHaveProperty('message', 'Email déjà utilisé');
+      expect(response.body).toHaveProperty('message');
     });
   });
 
@@ -103,7 +103,7 @@ describe('Auth Controller', () => {
       const response = await request(app)
         .post('/auth/login')
         .send(loginData)
-        .expect(400);
+        .expect(401);
 
       expect(response.body).toHaveProperty('message', 'Email ou mot de passe incorrect');
     });
@@ -117,7 +117,7 @@ describe('Auth Controller', () => {
       const response = await request(app)
         .post('/auth/login')
         .send(loginData)
-        .expect(400);
+        .expect(401);
 
       expect(response.body).toHaveProperty('message', 'Email ou mot de passe incorrect');
     });

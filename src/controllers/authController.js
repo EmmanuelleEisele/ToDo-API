@@ -3,18 +3,19 @@ import validator from "validator";
 import User from "../models/User.js";
 import RefreshToken from "../models/RefreshToken.js";
 import { generateRefreshToken, generateToken } from "../helper/JWT.js";
+import { ValidationError, ConflictError, AuthenticationError } from "../errors/AppError.js";
 
 export const authController = {
-  async registerUser(req, res) {
+  async registerUser(req, res, next) {
     try {
       const { firstname, lastname, email, password } = req.body;
       //verification de l'email
       if (!validator.isEmail(email)) {
-        return res.status(400).json({ message: "Email invalide" });
+        return next(new ValidationError("Email invalide"));
       }
       const existantEmail = await User.findOne({ email });
       if (existantEmail) {
-        return res.status(400).json({ message: "Email déjà utilisé" });
+        return next(new ConflictError("Email déjà utilisé"));
       }
       //hashage du mot de passe
       const hashedPassword = await argon2.hash(password);
@@ -68,29 +69,25 @@ export const authController = {
         "Erreur lors de l'enregistrement de l'utilisateur :",
         error
       );
-      res.status(500).json({ message: "Erreur serveur" });
+      next(error);
     }
   },
 
-  async loginUser(req, res) {
+  async loginUser(req, res, next) {
     try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(400).json({ message: "Email et mot de passe requis" });
+      return next(new ValidationError("Email et mot de passe requis"));
     }
     // Vérification de l'existence de l'utilisateur
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(400)
-        .json({ message: "Email ou mot de passe incorrect" });
+      return next(new AuthenticationError("Email ou mot de passe incorrect"));
     }
     // Vérification du mot de passe
     const validPassword = await argon2.verify(user.password, password);
     if (!validPassword) {
-      return res
-        .status(400)
-        .json({ message: "Email ou mot de passe incorrect" });
+      return next(new AuthenticationError("Email ou mot de passe incorrect"));
     }
     const payload = { id: user._id };
     const token = generateToken(payload);
@@ -123,11 +120,11 @@ export const authController = {
     });
   } catch (error) {
     console.error("Erreur lors de la connexion de l'utilisateur :", error);
-    res.status(500).json({ message: "Erreur serveur" });
+    next(error);
   }
   },
 
-  async logoutUser(req, res) {
+  async logoutUser(req, res, next) {
     try {
       const refreshToken = req.cookies.refreshToken;
       const isProd = process.env.NODE_ENV === "production";
@@ -148,7 +145,7 @@ export const authController = {
       res.status(200).json({ message: "Utilisateur déconnecté avec succès" });
     } catch (error) {
       console.error("Erreur lors de la déconnexion de l'utilisateur :", error);
-      res.status(500).json({ message: "Erreur serveur" });
+      next(error);
     }
   },
 };
