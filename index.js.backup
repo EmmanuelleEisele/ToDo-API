@@ -1,15 +1,11 @@
 // importation des variables d'environnement
 import dotenv from "dotenv";
-import express from "express";
-import cookieParser from "cookie-parser";
-import taskRouter from "./src/routers/taskRouter.js";
-import authRouter from "./src/routers/authRouter.js"; 
-import cors from "cors";
+import createApp from './app.js';
 import connectDB from './db.js';
 
 dotenv.config();
 
-const app = express();
+const app = createApp();
 const PORT = process.env.PORT ?? 3000;
 
 // Connexion à la base de données (seulement en prod/dev, pas en test)
@@ -46,14 +42,8 @@ app.get("/", (req, res) => {
   });
 });
 
-// Démarrer le serveur seulement si on n'est pas en mode test
-if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
-      console.log(`Server ready at http://localhost:${PORT}`);
-  }).on('error', (err) => {
-      console.error('Erreur serveur:', err);
-  });
-}
-
-// Exporter l'app pour les tests
-export default app;
+app.listen(PORT, () => {
+    console.log(`Server ready at http://localhost:${PORT}`);
+}).on('error', (err) => {
+    console.error('Erreur serveur:', err);
+});
