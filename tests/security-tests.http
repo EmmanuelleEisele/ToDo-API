@@ -1,0 +1,104 @@
+// Test de sécurisation de l'API
+// Ce fichier teste les différentes protections mises en place
+
+### 1. Test d'inscription avec mot de passe faible (doit échouer)
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "firstname": "Test",
+  "lastname": "User", 
+  "email": "test@example.com",
+  "password": "123"
+}
+
+###
+
+### 2. Test d'inscription avec mot de passe sécurisé (doit réussir)
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "firstname": "Test",
+  "lastname": "User",
+  "email": "test@example.com", 
+  "password": "SecurePass123!"
+}
+
+###
+
+### 3. Test d'injection NoSQL (doit être bloqué)
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": {"$ne": null},
+  "password": "anything"
+}
+
+###
+
+### 4. Test XSS dans les données (doit être sanitisé)
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "firstname": "<script>alert('xss')</script>",
+  "lastname": "User",
+  "email": "xss@example.com",
+  "password": "SecurePass123!"
+}
+
+###
+
+### 5. Test ObjectId invalide (doit échouer)
+GET http://localhost:3000/tasks/invalid-id
+Authorization: Bearer YOUR_TOKEN_HERE
+
+###
+
+### 6. Test de création de tâche normale (doit réussir)
+POST http://localhost:3000/tasks
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "title": "Ma nouvelle tâche",
+  "description": "Description de la tâche",
+  "status": "pending"
+}
+
+###
+
+### 7. Test de payload trop volumineux (doit être bloqué)
+POST http://localhost:3000/tasks
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "title": "A".repeat(1000000),
+  "description": "B".repeat(1000000)
+}
+
+###
+
+### 8. Test du refresh token
+POST http://localhost:3000/auth/refresh
+Content-Type: application/json
+
+###
+
+### 9. Test des headers de sécurité
+GET http://localhost:3000/
+Content-Type: application/json
+
+###
+
+### 10. Test rate limiting (faire plusieurs requêtes rapidement)
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "wrongpass"
+}

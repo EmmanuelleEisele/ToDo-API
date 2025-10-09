@@ -1,12 +1,29 @@
 // importation des variables d'environnement
-import 'dotenv/config';
-
+import dotenv from "dotenv";
 import express from "express";
-import router from "./src/routers/taskRouter.js"; 
+import cookieParser from "cookie-parser";
+import taskRouter from "./src/routers/taskRouter.js";
+import authRouter from "./src/routers/authRouter.js";
+import tokenRouter from "./src/routers/tokenRouter.js";
 import cors from "cors";
+import connectDB from './db.js';
+import { globalErrorHandler } from './src/middlewares/errorHandler.js';
+import { swaggerDocs } from "./src/config/swagger.js";
+import { securityHeaders, basicRateLimit, securityLogger, preventUserEnumeration } from "./src/middlewares/security.js";
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
+
+swaggerDocs(app);
+
+
+// Connexion à la base de données (seulement en prod/dev, pas en test)
+if (process.env.NODE_ENV !== 'test') {
+  connectDB();
+}
+
 
 app.use(cors({
   origin: [
@@ -23,8 +40,19 @@ app.use(cors({
 }));
 
 
-app.use(express.json());
-app.use(router);
+// Middlewares de sécurité globaux
+app.use(securityHeaders);
+app.use(basicRateLimit);
+app.use(securityLogger);
+app.use(preventUserEnumeration);
+
+app.use(express.json({ limit: '10mb' })); // Limite la taille des requêtes JSON
+app.use(cookieParser()); // Pour lire les cookies
+
+// Routes
+app.use('/auth', authRouter);
+app.use('/auth', tokenRouter);
+app.use('/tasks', taskRouter);
 
 app.get("/", (req, res) => {
   res.json({ 
@@ -32,8 +60,17 @@ app.get("/", (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server ready at http://localhost:${PORT}`);
-}).on('error', (err) => {
-    console.error('Erreur serveur:', err);
-});
+// Middleware de gestion d'erreurs (doit être en dernier)
+app.use(globalErrorHandler);
+
+// Démarrer le serveur seulement si on n'est pas en mode test
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+      console.log(`Server ready at http://localhost:${PORT}`);
+  }).on('error', (err) => {
+      console.error('Erreur serveur:', err);
+  });
+}
+
+// Exporter l'app pour les tests
+export default app;
