@@ -71,7 +71,7 @@ tokenRouter.post("/refresh",
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-tokenRouter.post("/revoke", 
+tokenRouter.post("/revoke", //revoke pour logout
   sanitized, 
   tokenController.revokeToken
 );
@@ -103,7 +103,7 @@ tokenRouter.post("/revoke",
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-tokenRouter.post("/revoke-all", 
+tokenRouter.post("/revoke-all", // revokeAll pour logout de tous les appareils
   auth, 
   sanitized, 
   tokenController.revokeAllTokens
@@ -161,7 +161,7 @@ tokenRouter.post("/revoke-all",
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-tokenRouter.get("/token-info", 
+tokenRouter.get("/token-info", // pour récupérer les infos du token
   sanitized, 
   tokenController.getTokenInfo
 );

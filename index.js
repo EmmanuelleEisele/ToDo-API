@@ -56,7 +56,7 @@ app.use('/tasks', taskRouter);
 
 app.get("/", (req, res) => {
   res.json({ 
-    message: "Bienvenue sur l’API To-Do ✅. Que la force soit avec toi apprenti dev ! 🚀"
+    message: "Bienvenue sur l’API To-Do ✅. Que la force soit avec toi apprenti dev ! 🚀 Rejoins le swagger ici : https://todo-api-2ij6.onrender.com/api-docs/"
   });
 });
 
