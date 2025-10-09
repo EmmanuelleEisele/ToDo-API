@@ -51,12 +51,12 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
-        description: 'Serveur de développement'
+        url: 'https://todo-api-2ij6.onrender.com',
+        description: 'Serveur de production (Render)'
       },
       {
-        url: 'https://your-api-domain.com',
-        description: 'Serveur de production'
+        url: 'http://localhost:3000',
+        description: 'Serveur de développement'
       }
     ],
     tags: [

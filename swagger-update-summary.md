@@ -45,6 +45,8 @@ Votre documentation Swagger est maintenant **à jour** et reflète fidèlement :
 - ✅ Tous les codes d'erreur possibles
 - ✅ La gestion des tokens de rafraîchissement
 
-**URL Swagger :** http://localhost:3000/api-docs
+**URL Swagger :** 
+- 🌐 **Production :** https://todo-api-2ij6.onrender.com/api-docs
+- 🏠 **Local :** http://localhost:3000/api-docs
 
 Les développeurs qui utilisent votre API auront maintenant une documentation complète et précise ! 📖✨
