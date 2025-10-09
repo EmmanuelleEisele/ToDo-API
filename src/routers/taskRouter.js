@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { taskController } from "../controllers/taskController.js";
 import { auth } from "../middlewares/auth.js";
+import { sanitizeInput, sanitized, limitDataSize } from "../middlewares/sanitization.js";
+import { validateObjectId } from "../middlewares/security.js";
 
 const router = Router();
 
@@ -34,7 +36,11 @@ const router = Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/", auth, taskController.getTasks);
+router.get("/", 
+  auth, 
+  sanitized,
+  taskController.getTasks
+);
 
 /**
  * @swagger
@@ -84,7 +90,12 @@ router.get("/", auth, taskController.getTasks);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/:id", auth, taskController.getTaskById);
+router.get("/:id", 
+  validateObjectId(),
+  auth, 
+  sanitized,
+  taskController.getTaskById
+);
 
 /**
  * @swagger
@@ -146,7 +157,13 @@ router.get("/:id", auth, taskController.getTaskById);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/", auth, taskController.createTask);
+router.post("/", 
+  auth, 
+  sanitized,
+  limitDataSize(20 * 1024), // 20KB max pour une tâche
+  sanitizeInput({ type: 'task' }),
+  taskController.createTask
+);
 
 /**
  * @swagger
@@ -218,7 +235,14 @@ router.post("/", auth, taskController.createTask);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.put("/:id", auth, taskController.updateTask);
+router.put("/:id", 
+  validateObjectId(),
+  auth, 
+  sanitized,
+  limitDataSize(20 * 1024), // 20KB max pour une tâche
+  sanitizeInput({ type: 'task' }),
+  taskController.updateTask
+);
 
 /**
  * @swagger
@@ -266,6 +290,11 @@ router.put("/:id", auth, taskController.updateTask);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.delete("/:id", auth, taskController.deleteTask);
+router.delete("/:id", 
+  validateObjectId(),
+  auth, 
+  sanitized,
+  taskController.deleteTask
+);
 
 export default router;

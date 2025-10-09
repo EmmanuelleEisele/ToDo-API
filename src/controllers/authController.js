@@ -129,12 +129,19 @@ export const authController = {
       const refreshToken = req.cookies.refreshToken;
       const isProd = process.env.NODE_ENV === "production";
       
-      if (refreshToken) {
-        // Supprimer le refresh token de la base de données
-        await RefreshToken.deleteOne({ token: refreshToken });
+      // GESTION STRICTE : Toujours supprimer TOUS les refresh tokens de l'utilisateur
+      if (req.user && req.user.id) {
+        // Si utilisateur authentifié, supprimer tous ses tokens
+        await RefreshToken.deleteMany({ userId: req.user.id });
+      } else if (refreshToken) {
+        // Sinon, trouver l'utilisateur via le refresh token et supprimer tous ses tokens
+        const tokenDoc = await RefreshToken.findOne({ token: refreshToken }).populate('userId');
+        if (tokenDoc) {
+          await RefreshToken.deleteMany({ userId: tokenDoc.userId });
+        }
       }
       
-      // Effacer le cookie côté client
+      // Effacer le cookie côté client dans tous les cas
       res.clearCookie("refreshToken", {
         httpOnly: true,
         secure: isProd,

@@ -1,6 +1,7 @@
 import { verifyToken } from '../helper/JWT.js';
 import { AuthenticationError } from '../errors/AppError.js';
 import { catchAsync } from './errorHandler.js';
+import User from '../models/User.js';
 
 export const auth = catchAsync(async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -16,8 +17,15 @@ export const auth = catchAsync(async (req, res, next) => {
   }
 
   // Vérifier le token
-  const user = verifyToken(token);
-  req.user = user; // Attacher les informations de l'utilisateur à la requête
+  const decoded = verifyToken(token);
+  
+  // Vérifier que l'utilisateur existe encore en base
+  const user = await User.findById(decoded.id).select('-password');
+  if (!user) {
+    throw new AuthenticationError('Utilisateur non trouvé');
+  }
+  
+  req.user = { id: user._id.toString() }; // Attacher les informations de l'utilisateur à la requête
   
   next();
 });

@@ -3,11 +3,13 @@ import dotenv from "dotenv";
 import express from "express";
 import cookieParser from "cookie-parser";
 import taskRouter from "./src/routers/taskRouter.js";
-import authRouter from "./src/routers/authRouter.js"; 
+import authRouter from "./src/routers/authRouter.js";
+import tokenRouter from "./src/routers/tokenRouter.js";
 import cors from "cors";
 import connectDB from './db.js';
 import { globalErrorHandler } from './src/middlewares/errorHandler.js';
 import { swaggerDocs } from "./src/config/swagger.js";
+import { securityHeaders, basicRateLimit, securityLogger, preventUserEnumeration } from "./src/middlewares/security.js";
 
 dotenv.config();
 
@@ -38,11 +40,18 @@ app.use(cors({
 }));
 
 
-app.use(express.json()); 
+// Middlewares de sécurité globaux
+app.use(securityHeaders);
+app.use(basicRateLimit);
+app.use(securityLogger);
+app.use(preventUserEnumeration);
+
+app.use(express.json({ limit: '10mb' })); // Limite la taille des requêtes JSON
 app.use(cookieParser()); // Pour lire les cookies
 
 // Routes
 app.use('/auth', authRouter);
+app.use('/auth', tokenRouter);
 app.use('/tasks', taskRouter);
 
 app.get("/", (req, res) => {

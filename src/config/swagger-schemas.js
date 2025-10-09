@@ -29,8 +29,11 @@
  *           example: "jean.dupont@email.com"
  *         password:
  *           type: string
- *           description: Mot de passe hashé (non visible dans les réponses)
+ *           description: |
+ *             Mot de passe sécurisé (non visible dans les réponses).
+ *             Exigences: 8+ caractères, majuscule, minuscule, chiffre, caractère spécial.
  *           writeOnly: true
+ *           minLength: 8
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -180,9 +183,13 @@
  *           example: "jean.dupont@email.com"
  *         password:
  *           type: string
- *           description: Mot de passe (minimum 6 caractères)
- *           example: "motdepasse123"
- *           minLength: 6
+ *           description: |
+ *             Mot de passe sécurisé (minimum 8 caractères).
+ *             Doit contenir: majuscule, minuscule, chiffre, caractère spécial.
+ *             Éviter: suites (1234, abcd), répétitions (aaa), mots courants.
+ *           example: "MonP@ssw0rd!"
+ *           minLength: 8
+ *           maxLength: 128
  * 
  *     UserLogin:
  *       type: object
@@ -285,6 +292,48 @@
  *           type: string
  *           example: "Email déjà utilisé"
  * 
+ *     SecurityError:
+ *       type: object
+ *       properties:
+ *         error:
+ *           type: string
+ *           example: "Mot de passe non sécurisé"
+ *         details:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example:
+ *             - "Le mot de passe doit contenir au moins 8 caractères"
+ *             - "Le mot de passe doit contenir au moins une lettre majuscule"
+ *         suggestions:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example:
+ *             - "Utilisez au moins 8 caractères"
+ *             - "Mélangez majuscules, minuscules, chiffres et symboles"
+ * 
+ *     RateLimitError:
+ *       type: object
+ *       properties:
+ *         error:
+ *           type: string
+ *           example: "Trop de requêtes"
+ *         message:
+ *           type: string
+ *           example: "Veuillez patienter avant de faire une nouvelle requête"
+ *         retryAfter:
+ *           type: integer
+ *           example: 600
+ *           description: "Nombre de secondes à attendre"
+ * 
+ *     PayloadTooLargeError:
+ *       type: object
+ *       properties:
+ *         error:
+ *           type: string
+ *           example: "Données trop volumineuses"
+ * 
  *   securitySchemes:
  *     bearerAuth:
  *       type: http
@@ -327,6 +376,40 @@
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/ConflictError'
+ *     
+ *     SecurityError:
+ *       description: Erreur de sécurité (mot de passe faible, données dangereuses)
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/SecurityError'
+ *     
+ *     RateLimitError:
+ *       description: Trop de requêtes (rate limiting)
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RateLimitError'
+ *       headers:
+ *         X-RateLimit-Limit:
+ *           description: Nombre maximum de requêtes autorisées
+ *           schema:
+ *             type: integer
+ *         X-RateLimit-Remaining:
+ *           description: Nombre de requêtes restantes
+ *           schema:
+ *             type: integer
+ *         X-RateLimit-Reset:
+ *           description: Timestamp de réinitialisation du compteur
+ *           schema:
+ *             type: integer
+ *     
+ *     PayloadTooLarge:
+ *       description: Données envoyées trop volumineuses
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/PayloadTooLargeError'
  */
 
 // Ce fichier contient uniquement les définitions de schémas Swagger

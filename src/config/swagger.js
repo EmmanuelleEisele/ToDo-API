@@ -17,7 +17,10 @@ const options = {
         - ✅ CRUD complet des tâches
         - ✅ Isolation des données par utilisateur
         - ✅ Gestion d'erreurs centralisée
-        - ✅ Validation des données
+        - ✅ Validation et sanitisation avancées des données
+        - 🛡️ Protection contre XSS, NoSQL injection, force brute
+        - 🔒 Validation stricte des mots de passe
+        - ⏰ Rate limiting et headers de sécurité
         
         ### 🔐 Authentification
         Pour utiliser les endpoints protégés:
@@ -31,7 +34,19 @@ const options = {
         - **401**: Token manquant, invalide ou expiré
         - **404**: Ressource non trouvée
         - **409**: Conflit (ex: email déjà utilisé)
+        - **413**: Payload trop volumineux
+        - **429**: Trop de requêtes (rate limiting)
         - **500**: Erreur serveur
+        
+        ### 🔐 Sécurité des mots de passe
+        Les mots de passe doivent respecter les critères suivants :
+        - **Minimum 8 caractères**
+        - **Au moins 1 lettre majuscule (A-Z)**
+        - **Au moins 1 lettre minuscule (a-z)**
+        - **Au moins 1 chiffre (0-9)**
+        - **Au moins 1 caractère spécial (!@#$%^&*...)**
+        - **Pas de suites évidentes** (1234, abcd, qwerty...)
+        - **Pas de répétitions** (aaa, 111...)
       `
     },
     servers: [
@@ -52,6 +67,10 @@ const options = {
       {
         name: 'Tasks',
         description: '📋 Gestion des tâches personnelles'
+      },
+      {
+        name: 'Tokens',
+        description: '🔄 Gestion des tokens de rafraîchissement et sécurité'
       }
     ]
   },

@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { authController } from "../controllers/authController.js";
+import { sanitizeInput, sanitized, limitDataSize } from "../middlewares/sanitization.js";
+import { validatePassword } from "../middlewares/passwordValidator.js";
 
 const router = Router();
 
@@ -50,19 +52,39 @@ const router = Router();
  *                   type: string
  *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *       400:
- *         description: Données invalides
+ *         description: Données invalides ou mot de passe non sécurisé
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Error'
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/ValidationError'
+ *                 - $ref: '#/components/schemas/SecurityError'
  *       409:
  *         description: Email déjà utilisé
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Error'
+ *               $ref: '#/components/schemas/ConflictError'
+ *       413:
+ *         description: Données trop volumineuses
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PayloadTooLargeError'
+ *       429:
+ *         description: Trop de requêtes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/RateLimitError'
  */
-router.post("/register", authController.registerUser);
+router.post("/register", 
+  sanitized,
+  limitDataSize(10 * 1024), // 10KB max pour registration
+  sanitizeInput({ type: 'user' }),
+  validatePassword,
+  authController.registerUser
+);
 
 /**
  * @swagger
@@ -120,7 +142,12 @@ router.post("/register", authController.registerUser);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/login", authController.loginUser);
+router.post("/login", 
+  sanitized,
+  limitDataSize(5 * 1024), // 5KB max pour login
+  sanitizeInput({ type: 'user' }),
+  authController.loginUser
+);
 
 /**
  * @swagger
@@ -148,6 +175,9 @@ router.post("/login", authController.loginUser);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/logout", authController.logoutUser);
+router.post("/logout", 
+  sanitized,
+  authController.logoutUser
+);
 
 export default router;
