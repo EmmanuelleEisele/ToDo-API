@@ -32,6 +32,15 @@
 - **Tests JWT & refresh tokens** (23 tests)
 - **Gestion d'erreurs** centralisée et normalisée
 
+## 🌐 **Démo en Ligne**
+
+🚀 **API déployée :** `https://votre-app.render.com`  
+📖 **Documentation Swagger :** `https://votre-app.render.com/api-docs`
+
+> 💡 Testez directement l'API avec l'interface Swagger interactive !
+
+---
+
 ## 🚀 Démarrage Rapide
 
 ### Prérequis
