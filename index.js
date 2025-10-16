@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import taskRouter from "./src/routers/taskRouter.js";
 import authRouter from "./src/routers/authRouter.js";
 import tokenRouter from "./src/routers/tokenRouter.js";
+import categoryRouter from "./src/routers/categoryRouter.js";
+import statsRouter from "./src/routers/statsRouter.js";
 import cors from "cors";
 import connectDB from './db.js';
 import { globalErrorHandler } from './src/middlewares/errorHandler.js';
@@ -53,6 +55,8 @@ app.use(cookieParser()); // Pour lire les cookies
 app.use('/auth', authRouter);
 app.use('/auth', tokenRouter);
 app.use('/tasks', taskRouter);
+app.use('/categories', categoryRouter);
+app.use('/stats', statsRouter);
 
 app.get("/", (req, res) => {
   res.json({ 

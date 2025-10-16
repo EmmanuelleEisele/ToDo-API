@@ -1,10 +1,139 @@
+
 import { Router } from "express";
 import { authController } from "../controllers/authController.js";
 import { sanitizeInput, sanitized, limitDataSize } from "../middlewares/sanitization.js";
 import { validatePassword } from "../middlewares/passwordValidator.js";
+import { auth } from "../middlewares/auth.js";
 
 const router = Router();
 
+
+/**
+ * @swagger
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Demander la réinitialisation du mot de passe (envoi d'un email)
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "jean.dupont@email.com"
+ *     responses:
+ *       200:
+ *         description: Email de réinitialisation envoyé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Email de réinitialisation envoyé"
+ *       400:
+ *         description: Email invalide
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ValidationError'
+ */
+router.post("/forgot-password", authController.forgotPassword);
+
+/**
+ * @swagger
+ * /auth/reset-password:
+ *   post:
+ *     summary: Réinitialiser le mot de passe avec le token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - newPassword
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *               newPassword:
+ *                 type: string
+ *                 minLength: 8
+ *                 example: "NouveauMotDePasse123!"
+ *     responses:
+ *       200:
+ *         description: Mot de passe réinitialisé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Mot de passe réinitialisé avec succès"
+ *       400:
+ *         description: Token ou mot de passe invalide
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ValidationError'
+ */
+router.post("/reset-password", authController.resetPassword);
+
+/**
+ * @swagger
+ * /auth/change-password:
+ *   post:
+ *     summary: Changer le mot de passe (utilisateur connecté)
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 example: "AncienMotDePasse123!"
+ *               newPassword:
+ *                 type: string
+ *                 minLength: 8
+ *                 example: "NouveauMotDePasse123!"
+ *     responses:
+ *       200:
+ *         description: Mot de passe changé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Mot de passe changé avec succès"
+ *       400:
+ *         description: Ancien mot de passe incorrect ou nouveau mot de passe invalide
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ValidationError'
+ */
+router.post("/change-password", auth, authController.changePassword);
 /**
  * @swagger
  * /auth/register:
