@@ -1,14 +1,12 @@
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MDYwOTY3NSwiZXhwIjoxNzYwNjEwNTc1fQ.15hm68kPL8bGbnOQJyCFDwyWGtwW-Z93e3Df7cGQWg0
-@refreshToken=refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MDYwOTY3NSwiZXhwIjoxNzYxMjE0NDc1fQ.QjQFZx9TijZgTFRO1F9rhRGmNJS6IyHvoz8Gi8xy3KQ; Max-Age=604800; Path=/; Expires=Thu, 23 Oct 2025 10:14:35 GMT; HttpOnly; Secure; Partitioned; SameSite=Strict
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MDYyMTQ3NywiZXhwIjoxNzYwNjIyMzc3fQ.fDRX84qpRjItlTch1OJv-rGv4p9lUId2nNp5TnI4t54
+@refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MDYyMTQ3NywiZXhwIjoxNzYxMjI2Mjc3fQ.aFFnmC0Zc-ujF49F6vOHQmrVhGrd6HOq5C8Fa-reqYI
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
-
 {
   "email": "manuecam2b@hotmail.fr",
-  "password": "SecurePass123!"
+  "password": "NewSecurePass123!"
 }
-
 
 ###
 
@@ -41,4 +39,25 @@ Content-Type: application/json
 {
   "email": "manuecam2b@hotmail.fr"
 }
+###
+POST http://localhost:3000/tasks/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Acheter des légumes",
+  "description": "Acheter des légumes frais pour la semaine",
+  "deadline": "2024-10-10T12:00:00Z",
+  "status": "overdue",
+  "priority": "high",
+  "isDone": false,
+  "period": "day",
+  "categoryName": "shopping"
+}
+
+###
+
+GET http://localhost:3000/stats/taskByDay
+Authorization: Bearer {{token}}
+
 ###

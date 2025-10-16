@@ -77,34 +77,7 @@ export const authController = {
     }
   },
 
-  /* Demande de réinitialisation du mot de passe Génère un token et le retourne dans la réponse*/
-  async forgotPassword(req, res, next) {
-    try {
-      const { email } = req.body;
-      if (!validator.isEmail(email)) {
-        return next(new ValidationError("Email invalide"));
-      }
-      const user = await User.findOne({ email });
-      if (!user) {
-        return next(new ValidationError("Aucun utilisateur avec cet email"));
-      }
-      // Générer un token de reset simple (à améliorer en prod)
-      const resetToken = generateToken(
-        { userId: user._id, type: "reset" },
-        "1h"
-      );
-      // Stocker le token et sa date d'expiration dans le user (à ajouter dans le modèle)
-      user.resetPasswordToken = resetToken;
-      user.resetPasswordExpires = Date.now() + 3600000; // 1h
-      await user.save();
-      // Envoyer le token par email
-      const { sendResetPasswordEmail } = await import("../helper/mailer.js");
-      await sendResetPasswordEmail(email, resetToken);
-      res.status(200).json({ message: "Email de réinitialisation envoyé" });
-    } catch (error) {
-      next(error);
-    }
-  },
+ 
 
   async loginUser(req, res, next) {
     try {
@@ -187,6 +160,37 @@ export const authController = {
       res.status(200).json({ message: "Utilisateur déconnecté avec succès" });
     } catch (error) {
       console.error("Erreur lors de la déconnexion de l'utilisateur :", error);
+      next(error);
+    }
+  },
+
+/*------------------------------MOTS DE PASSE------------------------------*/
+
+   /* Demande de réinitialisation du mot de passe Génère un token et le retourne dans la réponse*/
+  async forgotPassword(req, res, next) {
+    try {
+      const { email } = req.body;
+      if (!validator.isEmail(email)) {
+        return next(new ValidationError("Email invalide"));
+      }
+      const user = await User.findOne({ email });
+      if (!user) {
+        return next(new ValidationError("Aucun utilisateur avec cet email"));
+      }
+      // Générer un token de reset simple (à améliorer en prod)
+      const resetToken = generateToken(
+        { userId: user._id, type: "reset" },
+        "1h"
+      );
+      // Stocker le token et sa date d'expiration dans le user (à ajouter dans le modèle)
+      user.resetPasswordToken = resetToken;
+      user.resetPasswordExpires = Date.now() + 3600000; // 1h
+      await user.save();
+      // Envoyer le token par email
+      const { sendResetPasswordEmail } = await import("../helper/mailer.js");
+      await sendResetPasswordEmail(email, resetToken);
+      res.status(200).json({ message: "Email de réinitialisation envoyé" });
+    } catch (error) {
       next(error);
     }
   },

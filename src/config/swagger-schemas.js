@@ -45,12 +45,41 @@
  *           description: Date de dernière modification
  *           example: "2024-01-15T10:30:00Z"
  * 
- *     Task:
+*     Category:
+*       type: object
+*       required:
+*         - name
+*         - color
+*       properties:
+*         _id:
+*           type: string
+*           description: ID unique de la catégorie
+*           example: "507f1f77bcf86cd799439022"
+*         name:
+*           type: string
+*           description: Nom de la catégorie
+*           enum:
+*             - work
+*             - personal
+*             - shopping
+*             - health
+*             - finance
+*             - others
+*           example: "work"
+*         description:
+*           type: string
+*           description: Description de la catégorie
+*           example: "Tâches liées au travail"
+*         color:
+*           type: string
+*           description: Couleur hexadécimale associée
+*           example: "#FF5733"
+*     Task:
  *       type: object
  *       required:
  *         - title
- *         - description
  *         - userId
+ *         - period
  *       properties:
  *         _id:
  *           type: string
@@ -70,12 +99,38 @@
  *           type: string
  *           description: Statut actuel de la tâche
  *           enum: 
- *             - en cours
- *             - validé
- *             - annulé
- *             - en retard
- *           default: "en cours"
- *           example: "en cours"
+ *             - todo
+ *             - done
+ *             - cancelled
+ *             - overdue
+ *           default: "todo"
+ *           example: "todo"
+ *         isDone:
+ *           type: boolean
+ *           description: Indique si la tâche est terminée
+ *           example: false
+ *         period:
+ *           type: string
+ *           description: Période de la tâche
+ *           enum:
+ *             - day
+ *             - week
+ *             - month
+ *             - year
+ *           example: "day"
+ *         priority:
+ *           type: string
+ *           description: Priorité de la tâche
+ *           enum:
+ *             - low
+ *             - medium
+ *             - high
+ *           default: "medium"
+ *           example: "medium"
+ *         categoryId:
+ *           type: string
+ *           description: ID de la catégorie associée
+ *           example: "507f1f77bcf86cd799439022"
  *         deadline:
  *           type: string
  *           format: date
@@ -100,7 +155,7 @@
  *       type: object
  *       required:
  *         - title
- *         - description
+ *         - period
  *       properties:
  *         title:
  *           type: string
@@ -116,12 +171,38 @@
  *           type: string
  *           description: Statut de la tâche
  *           enum: 
- *             - en cours
- *             - validé
- *             - annulé
- *             - en retard
- *           default: "en cours"
- *           example: "en cours"
+ *             - todo
+ *             - done
+ *             - cancelled
+ *             - overdue
+ *           default: "todo"
+ *           example: "todo"
+ *         isDone:
+ *           type: boolean
+ *           description: Indique si la tâche est terminée
+ *           example: false
+ *         period:
+ *           type: string
+ *           description: Période de la tâche
+ *           enum:
+ *             - day
+ *             - week
+ *             - month
+ *             - year
+ *           example: "day"
+ *         priority:
+ *           type: string
+ *           description: Priorité de la tâche
+ *           enum:
+ *             - low
+ *             - medium
+ *             - high
+ *           default: "medium"
+ *           example: "medium"
+ *         categoryId:
+ *           type: string
+ *           description: ID de la catégorie associée
+ *           example: "507f1f77bcf86cd799439022"
  *         deadline:
  *           type: string
  *           format: date
@@ -145,11 +226,36 @@
  *           type: string
  *           description: Nouveau statut
  *           enum: 
- *             - en cours
- *             - validé
- *             - annulé
- *             - en retard
- *           example: "validé"
+ *             - todo
+ *             - done
+ *             - cancelled
+ *             - overdue
+ *           example: "done"
+ *         isDone:
+ *           type: boolean
+ *           description: Indique si la tâche est terminée
+ *           example: true
+ *         period:
+ *           type: string
+ *           description: Nouvelle période
+ *           enum:
+ *             - day
+ *             - week
+ *             - month
+ *             - year
+ *           example: "week"
+ *         priority:
+ *           type: string
+ *           description: Nouvelle priorité
+ *           enum:
+ *             - low
+ *             - medium
+ *             - high
+ *           example: "high"
+ *         categoryId:
+ *           type: string
+ *           description: Nouvelle catégorie associée
+ *           example: "507f1f77bcf86cd799439022"
  *         deadline:
  *           type: string
  *           format: date
