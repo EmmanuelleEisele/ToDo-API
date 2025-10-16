@@ -1,0 +1,44 @@
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MDYwOTY3NSwiZXhwIjoxNzYwNjEwNTc1fQ.15hm68kPL8bGbnOQJyCFDwyWGtwW-Z93e3Df7cGQWg0
+@refreshToken=refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MDYwOTY3NSwiZXhwIjoxNzYxMjE0NDc1fQ.QjQFZx9TijZgTFRO1F9rhRGmNJS6IyHvoz8Gi8xy3KQ; Max-Age=604800; Path=/; Expires=Thu, 23 Oct 2025 10:14:35 GMT; HttpOnly; Secure; Partitioned; SameSite=Strict
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+
+{
+  "email": "manuecam2b@hotmail.fr",
+  "password": "SecurePass123!"
+}
+
+
+###
+
+POST http://localhost:3000/auth/change-password
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "oldPassword": "SecurePass123!",
+  "newPassword": "NewSecurePass123!"
+}
+
+
+###
+POST http://localhost:3000/auth/logout
+Authorization: Bearer {{token}}
+
+###
+POST http://localhost:3000/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "manuecam2b@hotmail.fr"
+}
+###
+
+POST http://localhost:3000/auth/reset-password
+Content-Type: application/json
+
+{
+  "email": "manuecam2b@hotmail.fr"
+}
+###

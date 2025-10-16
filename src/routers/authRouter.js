@@ -1,10 +1,18 @@
+
 import { Router } from "express";
 import { authController } from "../controllers/authController.js";
 import { sanitizeInput, sanitized, limitDataSize } from "../middlewares/sanitization.js";
 import { validatePassword } from "../middlewares/passwordValidator.js";
+import { auth } from "../middlewares/auth.js";
 
 const router = Router();
 
+// Route pour demander la réinitialisation du mot de passe (envoie du mail)
+router.post("/forgot-password", authController.forgotPassword);
+// Route pour réinitialiser le mot de passe avec le token
+router.post("/reset-password", authController.resetPassword);
+// Route pour changer le mot de passe (utilisateur connecté)
+router.post("/change-password", auth, authController.changePassword);
 /**
  * @swagger
  * /auth/register:

@@ -19,8 +19,8 @@ POST http://localhost:3000/auth/register
 Content-Type: application/json
 
 {
-  "firstname": "Test",
-  "lastname": "User",
+  "pseudo": "Test",
+
   "email": "test@example.com", 
   "password": "SecurePass123!"
 }
