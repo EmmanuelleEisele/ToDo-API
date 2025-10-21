@@ -63,8 +63,7 @@ export const authController = {
         token,
         user: {
           id: newUser._id,
-          firstname: newUser.firstname,
-          lastname: newUser.lastname,
+          pseudo: newUser.pseudo,
           email: newUser.email,
         },
       });
@@ -118,8 +117,7 @@ export const authController = {
         token,
         user: {
           id: user._id,
-          firstname: user.firstname,
-          lastname: user.lastname,
+          pseudo: user.pseudo,
           email: user.email,
         },
         refreshToken,
