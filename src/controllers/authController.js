@@ -53,7 +53,7 @@ export const authController = {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: isProd,
-        sameSite: "Strict",
+        sameSite: isProd ? "Strict" : "Lax", // Lax en local, Strict en prod
         partitioned: true,
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
       });
