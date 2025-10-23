@@ -87,20 +87,19 @@ export const taskController = {
     try {
       const userId = req.user.id;
       const taskId = req.params.id;
-      const { title, description, status, deadline, categoryId, categoryName, isDone, priority, period } = req.body;
+      const updateFields = req.body;
 
-      let finalCategoryId = categoryId;
-      if (!finalCategoryId && req.body.categoryName) {
+      if (!updateFields.categoryId && req.body.categoryName) {
         const category = await Category.findOne({ name: req.body.categoryName });
         if (!category) {
           return next(new ValidationError("Catégorie non trouvée: " + req.body.categoryName));
         }
-        finalCategoryId = category._id;
+        updateFields.categoryId = category._id;
       }
 
       const task = await Task.findOneAndUpdate(
         { _id: taskId, userId: userId },
-        { title, description, status, deadline, categoryId: finalCategoryId, isDone, priority, period },
+        updateFields, // Mise à jour avec les champs fournis
         { new: true }
       ).populate('categoryId');
 
