@@ -101,15 +101,20 @@ const validateTaskInput = (data) => {
   if (data.description && data.description.length > 500) {
     errors.push("La description ne peut pas dépasser 500 caractères");
   }
-  if (!data.period || !["day", "week", "month"].includes(data.period)) {
-    errors.push("Période invalide ou manquante");
+  
+  // ✅ Période requise UNIQUEMENT pour la création
+  if (data.period && !["day", "week", "month", "year"].includes(data.period)) {
+    errors.push("Période invalide");
   }
+  
   if (data.priority && !["low", "medium", "high"].includes(data.priority)) {
     errors.push("Priorité invalide");
   }
-  if (data.isDone && typeof data.isDone !== "boolean") {
+  
+  if (data.isDone !== undefined && typeof data.isDone !== "boolean") {
     errors.push("isDone doit être un booléen");
   }
+  
   if (
     data.status &&
     !["todo", "done", "cancelled", "overdue"].includes(data.status)
