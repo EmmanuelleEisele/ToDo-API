@@ -82,49 +82,39 @@ export const taskController = {
     }
   },
 
-  async updateTask(req, res, next) {
-    try {
-      const userId = req.user.id;
-      const taskId = req.params.id;
-      const updateFields = {};
-      const {
-        title,
-        description,
-        status,
-        deadline,
-        categoryId,
-        isDone,
-        priority,
-        period,
-      } = req.body;
+async updateTask(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const taskId = req.params.id;
+    const { title, description, status, deadline, categoryId, categoryName, isDone, priority, period } = req.body;
 
-      if (title !== undefined) updateFields.title = title;
-      if (description !== undefined) updateFields.description = description;
-      if (status !== undefined) updateFields.status = status;
-      if (deadline !== undefined) updateFields.deadline = deadline;
-      if (isDone !== undefined) updateFields.isDone = isDone;
-      if (priority !== undefined) updateFields.priority = priority;
-      if (period !== undefined) updateFields.period = period;
-      if (categoryId !== undefined) updateFields.categoryId = categoryId;
-
-      const task = await Task.findOneAndUpdate(
-        { _id: taskId, userId: userId },
-        updateFields,
-        { new: true }
-      ).populate("categoryId");
-
-      if (!task) {
-        return next(new NotFoundError("Tâche non trouvée"));
+    let finalCategoryId = categoryId;
+    if (!finalCategoryId && req.body.categoryName) {
+      const category = await Category.findOne({ name: req.body.categoryName });
+      if (!category) {
+        return next(new ValidationError("Catégorie non trouvée: " + req.body.categoryName));
       }
-
-      res.status(200).json({
-        message: "Tâche mise à jour avec succès",
-        data: task,
-      });
-    } catch (error) {
-      next(error);
+      finalCategoryId = category._id;
     }
-  },
+
+    const task = await Task.findOneAndUpdate(
+      { _id: taskId, userId: userId },
+      { title, description, status, deadline, categoryId: finalCategoryId, isDone, priority, period },
+      { new: true }
+    ).populate('categoryId');
+
+    if (!task) {
+      return next(new NotFoundError("Tâche non trouvée"));
+    }
+
+    res.status(200).json({
+      message: "Tâche mise à jour avec succès",
+      data: task
+    });
+  } catch (error) {
+    next(error);
+  }
+},
 
   async deleteTask(req, res, next) {
     try {
