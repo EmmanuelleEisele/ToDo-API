@@ -45,15 +45,23 @@ const taskSchema = new mongoose.Schema(
 
 // Met à jour le status automatiquement si isDone est true
 taskSchema.pre('save', function(next) {
-  if (this.isDone) {
-    this.status = 'done';
-    if (!this.completedAt) {
-      this.completedAt = new Date();
+  try {
+    if (this.isDone === true) {
+      this.status = 'done';
+      if (!this.completedAt) {
+        this.completedAt = new Date();
+      }
+    } else if (this.isDone === false) {
+      // Si isDone est false et status est 'done', on le remet à 'todo'
+      if (this.status === 'done') {
+        this.status = 'todo';
+      }
+      this.completedAt = null;
     }
-  } else {
-    this.completedAt = null;
+    next();
+  } catch (error) {
+    next(error);
   }
-  next();
 });
 
 const Task = mongoose.model("Task", taskSchema);
