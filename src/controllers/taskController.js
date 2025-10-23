@@ -94,12 +94,13 @@ async updateTask(req, res, next) {
       return next(new NotFoundError("Tâche non trouvée"));
     }
 
-    // Mettre à jour les champs
+    // Mettre à jour les champs uniquement s'ils sont définis
     if (title !== undefined) task.title = title;
     if (description !== undefined) task.description = description;
     if (priority !== undefined) task.priority = priority;
     if (period !== undefined) task.period = period;
     if (deadline !== undefined) task.deadline = deadline;
+    if (status !== undefined) task.status = status;
     if (isDone !== undefined) task.isDone = isDone; // ✅ Cela va déclencher le pre('save')
 
     // Gérer la catégorie
@@ -113,11 +114,13 @@ async updateTask(req, res, next) {
       task.categoryId = categoryId;
     }
 
-    // Si status est fourni
-    if (status !== undefined) task.status = status;
-
     // ✅ Utiliser .save() pour déclencher le middleware pre('save')
-    await task.save();
+    try {
+      await task.save();
+    } catch (saveError) {
+      console.error('Erreur lors de la sauvegarde de la tâche:', saveError);
+      return next(saveError);
+    }
     
     // ✅ Rafraîchir la tâche avec population
     const updatedTask = await Task.findById(task._id).populate('categoryId');
@@ -127,6 +130,7 @@ async updateTask(req, res, next) {
       data: updatedTask
     });
   } catch (error) {
+    console.error('Erreur updateTask:', error);
     next(error);
   }
 },
