@@ -3,26 +3,24 @@ import Category from "../models/Category.js";
 import { ValidationError, NotFoundError } from "../errors/AppError.js";
 
 export const taskController = {
-
   async createTask(req, res, next) {
     try {
-      const { title, description, status, deadline, categoryId, categoryName, isDone, priority, period } = req.body;
+      const {
+        title,
+        description,
+        status,
+        deadline,
+        categoryId,
+        isDone,
+        priority,
+        period,
+      } = req.body;
 
       if (!title) {
         return next(new ValidationError("Le titre est requis"));
       }
       if (!period) {
         return next(new ValidationError("La période est requise"));
-      }
-
-      let finalCategoryId = categoryId;
-      // Si categoryId n'est pas fourni mais categoryName oui, on cherche l'ObjectId
-      if (!finalCategoryId && req.body.categoryName) {
-        const category = await Category.findOne({ name: req.body.categoryName });
-        if (!category) {
-          return next(new ValidationError("Catégorie non trouvée: " + req.body.categoryName));
-        }
-        finalCategoryId = category._id;
       }
 
       // Permet aussi d'accepter categoryId comme string (ObjectId)
@@ -33,7 +31,7 @@ export const taskController = {
         isDone,
         period,
         priority,
-        categoryId: finalCategoryId,
+        categoryId,
         deadline,
         userId: req.user.id,
       });
@@ -41,7 +39,7 @@ export const taskController = {
       await newTask.save();
       res.status(201).json({
         message: "Tâche créée avec succès",
-        data: newTask
+        data: newTask,
       });
     } catch (error) {
       next(error);
@@ -53,15 +51,17 @@ export const taskController = {
       const userId = req.user.id;
       const taskId = req.params.id;
 
-      const task = await Task.findOne({ _id: taskId, userId: userId }).populate('categoryId');
-      
+      const task = await Task.findOne({ _id: taskId, userId: userId }).populate(
+        "categoryId"
+      );
+
       if (!task) {
         return next(new NotFoundError("Tâche non trouvée"));
       }
 
       res.status(200).json({
         message: "Tâche récupérée avec succès",
-        data: task
+        data: task,
       });
     } catch (error) {
       next(error);
@@ -71,8 +71,8 @@ export const taskController = {
   async getTasks(req, res, next) {
     try {
       const userId = req.user.id;
-      const tasks = await Task.find({ userId: userId }).populate('categoryId');
-      
+      const tasks = await Task.find({ userId: userId }).populate("categoryId");
+
       res.status(200).json({
         message: "Liste des tâches récupérée avec succès",
         data: tasks,
@@ -82,26 +82,36 @@ export const taskController = {
     }
   },
 
-
   async updateTask(req, res, next) {
     try {
       const userId = req.user.id;
       const taskId = req.params.id;
-      const updateFields = req.body;
+      const updateFields = {};
+      const {
+        title,
+        description,
+        status,
+        deadline,
+        categoryId,
+        isDone,
+        priority,
+        period,
+      } = req.body;
 
-      if (!updateFields.categoryId && req.body.categoryName) {
-        const category = await Category.findOne({ name: req.body.categoryName });
-        if (!category) {
-          return next(new ValidationError("Catégorie non trouvée: " + req.body.categoryName));
-        }
-        updateFields.categoryId = category._id;
-      }
+      if (title !== undefined) updateFields.title = title;
+      if (description !== undefined) updateFields.description = description;
+      if (status !== undefined) updateFields.status = status;
+      if (deadline !== undefined) updateFields.deadline = deadline;
+      if (isDone !== undefined) updateFields.isDone = isDone;
+      if (priority !== undefined) updateFields.priority = priority;
+      if (period !== undefined) updateFields.period = period;
+      if (categoryId !== undefined) updateFields.categoryId = categoryId;
 
       const task = await Task.findOneAndUpdate(
         { _id: taskId, userId: userId },
-        updateFields, // Mise à jour avec les champs fournis
+        updateFields,
         { new: true }
-      ).populate('categoryId');
+      ).populate("categoryId");
 
       if (!task) {
         return next(new NotFoundError("Tâche non trouvée"));
@@ -109,25 +119,24 @@ export const taskController = {
 
       res.status(200).json({
         message: "Tâche mise à jour avec succès",
-        data: task
+        data: task,
       });
     } catch (error) {
       next(error);
     }
   },
 
-
   async deleteTask(req, res, next) {
     try {
       const userId = req.user.id;
       const taskId = req.params.id;
-      
+
       const task = await Task.findOneAndDelete({ _id: taskId, userId: userId });
-      
+
       if (!task) {
         return next(new NotFoundError("Tâche non trouvée"));
       }
-      
+
       res.status(200).json({ message: "Tâche supprimée avec succès" });
     } catch (error) {
       next(error);
