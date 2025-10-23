@@ -118,11 +118,13 @@ async updateTask(req, res, next) {
 
     // ✅ Utiliser .save() pour déclencher le middleware pre('save')
     await task.save();
-    await task.populate('categoryId');
+    
+    // ✅ Rafraîchir la tâche avec population
+    const updatedTask = await Task.findById(task._id).populate('categoryId');
 
     res.status(200).json({
       message: "Tâche mise à jour avec succès",
-      data: task
+      data: updatedTask
     });
   } catch (error) {
     next(error);
