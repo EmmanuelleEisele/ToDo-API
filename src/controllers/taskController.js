@@ -88,24 +88,37 @@ async updateTask(req, res, next) {
     const taskId = req.params.id;
     const { title, description, status, deadline, categoryId, categoryName, isDone, priority, period } = req.body;
 
-    let finalCategoryId = categoryId;
-    if (!finalCategoryId && req.body.categoryName) {
-      const category = await Category.findOne({ name: req.body.categoryName });
-      if (!category) {
-        return next(new ValidationError("Catégorie non trouvée: " + req.body.categoryName));
-      }
-      finalCategoryId = category._id;
-    }
-
-    const task = await Task.findOneAndUpdate(
-      { _id: taskId, userId: userId },
-      { title, description, status, deadline, categoryId: finalCategoryId, isDone, priority, period },
-      { new: true }
-    ).populate('categoryId');
-
+    // Chercher la tâche
+    const task = await Task.findOne({ _id: taskId, userId: userId });
     if (!task) {
       return next(new NotFoundError("Tâche non trouvée"));
     }
+
+    // Mettre à jour les champs
+    if (title !== undefined) task.title = title;
+    if (description !== undefined) task.description = description;
+    if (priority !== undefined) task.priority = priority;
+    if (period !== undefined) task.period = period;
+    if (deadline !== undefined) task.deadline = deadline;
+    if (isDone !== undefined) task.isDone = isDone; // ✅ Cela va déclencher le pre('save')
+
+    // Gérer la catégorie
+    if (categoryName && !categoryId) {
+      const category = await Category.findOne({ name: categoryName });
+      if (!category) {
+        return next(new ValidationError("Catégorie non trouvée: " + categoryName));
+      }
+      task.categoryId = category._id;
+    } else if (categoryId !== undefined) {
+      task.categoryId = categoryId;
+    }
+
+    // Si status est fourni
+    if (status !== undefined) task.status = status;
+
+    // ✅ Utiliser .save() pour déclencher le middleware pre('save')
+    await task.save();
+    await task.populate('categoryId');
 
     res.status(200).json({
       message: "Tâche mise à jour avec succès",
