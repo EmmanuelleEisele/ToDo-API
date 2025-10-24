@@ -84,15 +84,22 @@ export const taskController = {
 
 async updateTask(req, res, next) {
   try {
+    console.log('=== updateTask START ===');
+    console.log('Body reçu:', req.body);
+    
     const userId = req.user.id;
     const taskId = req.params.id;
     const { title, description, status, deadline, categoryId, categoryName, isDone, priority, period } = req.body;
+
+    console.log('userId:', userId, 'taskId:', taskId);
 
     // Chercher la tâche
     const task = await Task.findOne({ _id: taskId, userId: userId });
     if (!task) {
       return next(new NotFoundError("Tâche non trouvée"));
     }
+
+    console.log('Tâche trouvée:', task.title);
 
     // Mettre à jour les champs uniquement s'ils sont définis
     if (title !== undefined) task.title = title;
@@ -101,7 +108,10 @@ async updateTask(req, res, next) {
     if (period !== undefined) task.period = period;
     if (deadline !== undefined) task.deadline = deadline;
     if (status !== undefined) task.status = status;
-    if (isDone !== undefined) task.isDone = isDone; // ✅ Cela va déclencher le pre('save')
+    if (isDone !== undefined) {
+      console.log('Changement isDone:', task.isDone, '->', isDone);
+      task.isDone = isDone; // ✅ Cela va déclencher le pre('save')
+    }
 
     // Gérer la catégorie
     if (categoryName && !categoryId) {
@@ -114,23 +124,24 @@ async updateTask(req, res, next) {
       task.categoryId = categoryId;
     }
 
+    console.log('Avant save - status:', task.status, 'isDone:', task.isDone);
+
     // ✅ Utiliser .save() pour déclencher le middleware pre('save')
-    try {
-      await task.save();
-    } catch (saveError) {
-      console.error('Erreur lors de la sauvegarde de la tâche:', saveError);
-      return next(saveError);
-    }
+    await task.save();
+    
+    console.log('Après save - status:', task.status, 'isDone:', task.isDone);
     
     // ✅ Rafraîchir la tâche avec population
     const updatedTask = await Task.findById(task._id).populate('categoryId');
 
+    console.log('=== updateTask END - SUCCESS ===');
     res.status(200).json({
       message: "Tâche mise à jour avec succès",
       data: updatedTask
     });
   } catch (error) {
-    console.error('Erreur updateTask:', error);
+    console.error('=== updateTask ERROR ===', error);
+    console.error('Stack:', error.stack);
     next(error);
   }
 },

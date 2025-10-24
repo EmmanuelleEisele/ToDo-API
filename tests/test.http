@@ -1,5 +1,5 @@
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MDYyMTQ3NywiZXhwIjoxNzYwNjIyMzc3fQ.fDRX84qpRjItlTch1OJv-rGv4p9lUId2nNp5TnI4t54
-@refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MDYyMTQ3NywiZXhwIjoxNzYxMjI2Mjc3fQ.aFFnmC0Zc-ujF49F6vOHQmrVhGrd6HOq5C8Fa-reqYI
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MTI5Mjg0NSwiZXhwIjoxNzYxMjkzNzQ1fQ.9uo-ysAL3CPgYTYbEMrpErrEuzrs1YXmrXVDmw5dCXY
+@refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MTI5Mjg0NSwiZXhwIjoxNzYxODk3NjQ1fQ.MhziHDqCVOOxT89ksQB6JfeU3tRs_T_T_eav1Q9zvTc
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
@@ -61,3 +61,25 @@ GET http://localhost:3000/stats/taskByDay
 Authorization: Bearer {{token}}
 
 ###
+PUT http://localhost:3000/tasks/68fb3259de546de72484ab02
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "isDone": true
+}
+
+###
+
+PUT http://localhost:3000/tasks/68fb3259de546de72484ab02
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "isDone": true
+}
+
+###
+
+GET http://localhost:3000/tasks/68fb3259de546de72484ab02
+Authorization: Bearer {{token}}
