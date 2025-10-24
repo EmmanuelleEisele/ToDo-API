@@ -6,11 +6,6 @@ const categorySchema = new mongoose.Schema(
       enum: ["work", "personal", "shopping", "health", "finance", "others"],
       required: true,
     },
-    icon: {
-      type: String,
-      required: false,
-      trim: true,
-    },
   },
   { timestamps: true }
 );

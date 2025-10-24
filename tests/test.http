@@ -1,4 +1,4 @@
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MTI5Mjg0NSwiZXhwIjoxNzYxMjkzNzQ1fQ.9uo-ysAL3CPgYTYbEMrpErrEuzrs1YXmrXVDmw5dCXY
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MTMxNTE3NCwiZXhwIjoxNzYxMzE2MDc0fQ.FMtbCbD7cx74C_z01w1SRtvFHYqdjHFve1uTvA07LTw
 @refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MTI5Mjg0NSwiZXhwIjoxNzYxODk3NjQ1fQ.MhziHDqCVOOxT89ksQB6JfeU3tRs_T_T_eav1Q9zvTc
 POST http://localhost:3000/auth/login
 Content-Type: application/json
@@ -39,6 +39,9 @@ Content-Type: application/json
 {
   "email": "manuecam2b@hotmail.fr"
 }
+###
+GET http://localhost:3000/tasks/
+Authorization: Bearer {{token}}
 ###
 POST http://localhost:3000/tasks/
 Content-Type: application/json
