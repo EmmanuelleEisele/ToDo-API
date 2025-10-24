@@ -3,12 +3,12 @@ import Category from "../src/models/Category.js";
 import dotenv from "dotenv";
 dotenv.config();
 const categories = [
-  { name: "work", icon: "briefcase" },
-  { name: "personal", icon: "user" },
-  { name: "shopping", icon: "shopping-cart" },
-  { name: "health", icon: "heartbeat" },
-  { name: "finance", icon: "dollar-sign" },
-  { name: "others", icon: "star" }
+  { name: "work" },
+  { name: "personal" },
+  { name: "shopping" },
+  { name: "health" },
+  { name: "finance" },
+  { name: "others" }
 ];
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/todo";
