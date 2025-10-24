@@ -83,3 +83,16 @@ Authorization: Bearer {{token}}
 
 GET http://localhost:3000/tasks/68fb3259de546de72484ab02
 Authorization: Bearer {{token}}
+###
+
+GET http://localhost:3000/categories/
+Authorization: Bearer {{token}}
+
+###
+POST http://localhost:3000/categories/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+{
+  "name": "Courses"
+} 
+###

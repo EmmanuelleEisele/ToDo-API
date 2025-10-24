@@ -6,10 +6,10 @@ const categorySchema = new mongoose.Schema(
       enum: ["work", "personal", "shopping", "health", "finance", "others"],
       required: true,
     },
-    color: {
+    icon: {
       type: String,
-      required: true,
-      match: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/ // code hexadécimal
+      required: false,
+      trim: true,
     },
   },
   { timestamps: true }
