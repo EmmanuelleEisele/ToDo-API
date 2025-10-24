@@ -15,10 +15,12 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/todo";
 
 async function initCategories() {
   await mongoose.connect(MONGO_URI);
+  // Supprime le champ 'icon' de toutes les catégories existantes
+  await Category.updateMany({}, { $unset: { icon: "" } });
   for (const cat of categories) {
     await Category.updateOne({ name: cat.name }, cat, { upsert: true });
   }
-  console.log("Catégories fixes initialisées.");
+  console.log("Catégories fixes initialisées et champ 'icon' supprimé.");
   await mongoose.disconnect();
 }
 
