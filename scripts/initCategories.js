@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Category from "../src/models/Category.js";
-
+import dotenv from "dotenv";
+dotenv.config();
 const categories = [
   { name: "work", icon: "briefcase" },
   { name: "personal", icon: "user" },
