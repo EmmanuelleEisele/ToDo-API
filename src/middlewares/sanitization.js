@@ -122,8 +122,12 @@ const validateTaskInput = (data) => {
     errors.push("Statut invalide");
   }
 
-  if (data.deadline && !validator.isISO8601(data.deadline)) {
-    errors.push("Format de date invalide pour la deadline");
+  if (data.deadline) {
+    // Accepte les formats ISO8601 et les dates valides
+    const deadlineDate = new Date(data.deadline);
+    if (isNaN(deadlineDate.getTime())) {
+      errors.push("Format de date invalide pour la deadline");
+    }
   }
 
   return errors;
@@ -152,14 +156,14 @@ export const sanitizeInput = (options = {}) => {
       }
 
       if (req.params && typeof req.params === "object") {
-        for (const key in req.params) {
-          if (
-            req.params.hasOwnProperty(key) &&
-            typeof req.params[key] === "string"
-          ) {
-            req.params[key] = sanitizeString(req.params[key]);
-          }
-        }
+            for (const key in req.params) {
+              if (
+                Object.prototype.hasOwnProperty.call(req.params, key) &&
+                typeof req.params[key] === "string"
+              ) {
+                req.params[key] = sanitizeString(req.params[key]);
+              }
+            }
       }
 
       // Validation spécifique selon le type de données
