@@ -65,9 +65,7 @@ export const taskController = {
       const userId = req.user.id;
       const taskId = req.params.id;
 
-      const task = await Task.findOne({ _id: taskId, userId: userId }).populate(
-        "categoryId"
-      );
+      const task = await Task.findOne({ _id: taskId, userId: userId });
 
       if (!task) {
         return next(new NotFoundError("Tâche non trouvée"));
@@ -85,7 +83,7 @@ export const taskController = {
   async getTasks(req, res, next) {
     try {
       const userId = req.user.id;
-      const tasks = await Task.find({ userId: userId }).populate("categoryId");
+      const tasks = await Task.find({ userId: userId });
 
       res.status(200).json({
         message: "Liste des tâches récupérée avec succès",
