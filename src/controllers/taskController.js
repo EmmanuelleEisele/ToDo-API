@@ -107,7 +107,6 @@ export const taskController = {
         status,
         deadline,
         categoryId,
-        categoryName,
         isDone,
         priority,
         period,
@@ -136,11 +135,11 @@ export const taskController = {
       }
 
       // Gérer la catégorie
-      if (categoryName && !categoryId) {
-        const category = await Category.findOne({ name: categoryName });
+      if (!categoryId) {
+        const category = await Category.findOne({ name: categoryId });
         if (!category) {
           return next(
-            new ValidationError("Catégorie non trouvée: " + categoryName)
+            new ValidationError("Catégorie non trouvée: " + categoryId)
           );
         }
         task.categoryId = category._id;
