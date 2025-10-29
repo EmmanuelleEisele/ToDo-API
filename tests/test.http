@@ -1,5 +1,5 @@
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MTMxNTE3NCwiZXhwIjoxNzYxMzE2MDc0fQ.FMtbCbD7cx74C_z01w1SRtvFHYqdjHFve1uTvA07LTw
-@refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MTI5Mjg0NSwiZXhwIjoxNzYxODk3NjQ1fQ.MhziHDqCVOOxT89ksQB6JfeU3tRs_T_T_eav1Q9zvTc
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MTc0NjEyNSwiZXhwIjoxNzYxNzQ3MDI1fQ.SIv79s2QNicuyUlnn4eQs4XKW8B4gmTjcSiCS9R0f6o
+@refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjBjM2JhOTFmYjg5NmEyODhiYWEyYSIsImlhdCI6MTc2MTc0NjEyNSwiZXhwIjoxNzYyMzUwOTI1fQ.B527gictEHij6KkQuKfYaeM73z_KZgxLJqr-_2sN8HY
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
@@ -48,14 +48,14 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "title": "Acheter des légumes",
-  "description": "Acheter des légumes frais pour la semaine",
+  "title": "Acheter Viandes",
+  "description": "Acheter des viandes fraîches pour la semaine",
   "deadline": "2024-10-10T12:00:00Z",
   "status": "overdue",
   "priority": "high",
   "isDone": false,
   "period": "day",
-  "categoryName": "shopping"
+  "categoryId": "shopping"
 }
 
 ###
