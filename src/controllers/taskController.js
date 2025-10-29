@@ -107,7 +107,6 @@ export const taskController = {
         status,
         deadline,
         categoryId,
-        categoryName,
         isDone,
         priority,
         period,
@@ -134,18 +133,19 @@ export const taskController = {
         console.log("Changement isDone:", task.isDone, "->", isDone);
         task.isDone = isDone; // ✅ Cela va déclencher le pre('save')
       }
-
-      // Gérer la catégorie
-      if (categoryName && !categoryId) {
-        const category = await Category.findOne({ name: categoryName });
-        if (!category) {
-          return next(
-            new ValidationError("Catégorie non trouvée: " + categoryName)
-          );
+      // Gérer la catégorie UNIQUEMENT si categoryId est défini dans la requête
+      if (categoryId !== undefined) {
+        if (typeof categoryId === "string" && categoryId.length < 24) {
+          const category = await Category.findOne({ name: categoryId });
+          if (!category) {
+            return next(
+              new ValidationError("Catégorie non trouvée: " + categoryId)
+            );
+          }
+          task.categoryId = category._id;
+        } else {
+          task.categoryId = categoryId;
         }
-        task.categoryId = category._id;
-      } else if (categoryId !== undefined) {
-        task.categoryId = categoryId;
       }
 
       console.log("Avant save - status:", task.status, "isDone:", task.isDone);
