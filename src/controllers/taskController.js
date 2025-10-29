@@ -22,16 +22,22 @@ export const taskController = {
       if (!period) {
         return next(new ValidationError("La période est requise"));
       }
-      let categoryObjectId = categoryId;
-      // Si categoryId est une clé, cherche l'_id correspondant
-      if (typeof categoryId === "string" && categoryId.length < 24) {
-        const category = await Category.findOne({ name: categoryId });
-        if (!category) {
-          return next(new ValidationError("Catégorie invalide"));
+
+      let categoryObjectId = null;
+      if (categoryId) {
+        // Si categoryId est un nom, cherche l'_id correspondant
+        if (typeof categoryId === "string" && categoryId.length < 24) {
+          const category = await Category.findOne({ name: categoryId });
+          if (!category) {
+            return next(new ValidationError("Catégorie invalide"));
+          }
+          categoryObjectId = category._id;
+        } else {
+          // On suppose que c'est déjà un ObjectId valide
+          categoryObjectId = categoryId;
         }
-        categoryObjectId = category._id;
       }
-      // Permet aussi d'accepter categoryId comme string (ObjectId)
+
       const newTask = new Task({
         title,
         description,
@@ -39,7 +45,7 @@ export const taskController = {
         isDone,
         period,
         priority,
-        categoryId,
+        categoryId: categoryObjectId,
         deadline,
         userId: req.user.id,
       });
