@@ -67,6 +67,22 @@ export const taskController = {
 
       const task = await Task.findOne({ _id: taskId, userId: userId });
 
+      const now = new Date();
+      const overdueTasks = [];
+
+      for (const t of task) {
+        if (
+          task.deadline &&
+          new Date(task.deadline) < now &&
+          task.status !== "overdue" &&
+          !task.isDone
+        ) {
+          t.status = "overdue";
+          await t.save();
+          overdueTasks.push(t._id);
+        }
+      }
+
       if (!task) {
         return next(new NotFoundError("Tâche non trouvée"));
       }
@@ -85,6 +101,22 @@ export const taskController = {
       const userId = req.user.id;
       const tasks = await Task.find({ userId: userId });
 
+      const now = new Date();
+      const overdueTasks = [];
+
+      for (const task of tasks) {
+        if (
+          task.deadline &&
+          new Date(task.deadline) < now &&
+          task.status !== "overdue" &&
+          !task.isDone
+        ) {
+          task.status = "overdue";
+          await task.save();
+          overdueTasks.push(task._id);
+        }
+      }
+
       res.status(200).json({
         message: "Liste des tâches récupérée avec succès",
         data: tasks,
@@ -96,9 +128,6 @@ export const taskController = {
 
   async updateTask(req, res, next) {
     try {
-      console.log("=== updateTask START ===");
-      console.log("Body reçu:", req.body);
-
       const userId = req.user.id;
       const taskId = req.params.id;
       const {
@@ -112,15 +141,12 @@ export const taskController = {
         period,
       } = req.body;
 
-      console.log("userId:", userId, "taskId:", taskId);
-
       // Chercher la tâche
       const task = await Task.findOne({ _id: taskId, userId: userId });
+      
       if (!task) {
         return next(new NotFoundError("Tâche non trouvée"));
       }
-
-      console.log("Tâche trouvée:", task.title);
 
       // Mettre à jour les champs uniquement s'ils sont définis
       if (title !== undefined) task.title = title;
@@ -130,10 +156,9 @@ export const taskController = {
       if (deadline !== undefined) task.deadline = deadline;
       if (status !== undefined) task.status = status;
       if (isDone !== undefined) {
-        console.log("Changement isDone:", task.isDone, "->", isDone);
-        task.isDone = isDone; // ✅ Cela va déclencher le pre('save')
+        task.isDone = isDone; 
       }
-      // Gérer la catégorie UNIQUEMENT si categoryId est défini dans la requête
+      // Gérer la catégorie si categoryId est défini dans la requête
       if (categoryId !== undefined) {
         if (typeof categoryId === "string" && categoryId.length < 24) {
           const category = await Category.findOne({ name: categoryId });
@@ -147,25 +172,16 @@ export const taskController = {
           task.categoryId = categoryId;
         }
       }
-
-      console.log("Avant save - status:", task.status, "isDone:", task.isDone);
-
-      // ✅ Utiliser .save() pour déclencher le middleware pre('save')
+      //  Utiliser .save() pour déclencher le middleware pre('save')
       await task.save();
-
-      console.log("Après save - status:", task.status, "isDone:", task.isDone);
-
-      // ✅ Rafraîchir la tâche avec population
+      //  Rafraîchir la tâche avec population
       const updatedTask = await Task.findById(task._id).populate("categoryId");
 
-      console.log("=== updateTask END - SUCCESS ===");
       res.status(200).json({
         message: "Tâche mise à jour avec succès",
         data: updatedTask,
       });
     } catch (error) {
-      console.error("=== updateTask ERROR ===", error);
-      console.error("Stack:", error.stack);
       next(error);
     }
   },
