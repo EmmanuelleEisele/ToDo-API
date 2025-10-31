@@ -68,19 +68,14 @@ export const taskController = {
       const task = await Task.findOne({ _id: taskId, userId: userId });
 
       const now = new Date();
-      const overdueTasks = [];
-
-      for (const t of task) {
-        if (
-          task.deadline &&
-          new Date(task.deadline) < now &&
-          task.status !== "overdue" &&
-          !task.isDone
-        ) {
-          t.status = "overdue";
-          await t.save();
-          overdueTasks.push(t._id);
-        }
+      if (
+        task.deadline &&
+        new Date(task.deadline) < now &&
+        task.status !== "overdue" &&
+        !task.isDone
+      ) {
+        task.status = "overdue";
+        await task.save();
       }
 
       if (!task) {
@@ -143,7 +138,7 @@ export const taskController = {
 
       // Chercher la tâche
       const task = await Task.findOne({ _id: taskId, userId: userId });
-      
+
       if (!task) {
         return next(new NotFoundError("Tâche non trouvée"));
       }
@@ -156,7 +151,7 @@ export const taskController = {
       if (deadline !== undefined) task.deadline = deadline;
       if (status !== undefined) task.status = status;
       if (isDone !== undefined) {
-        task.isDone = isDone; 
+        task.isDone = isDone;
       }
       // Gérer la catégorie si categoryId est défini dans la requête
       if (categoryId !== undefined) {
