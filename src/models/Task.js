@@ -6,10 +6,14 @@ const taskSchema = new mongoose.Schema(
     description: { type: String },
     status: {
       type: String,
-      enum: ["todo", "done", "cancelled", "overdue"],
+      enum: ["todo", "done", "cancelled", "overdue", "archived"],
       default: "todo",
     },
     isDone: {
+      type: Boolean,
+      default: false
+    },
+    isArchived: {
       type: Boolean,
       default: false
     },
@@ -63,6 +67,16 @@ taskSchema.pre('save', function(next) {
     next(error);
   }
 });
-
+// met a jour le status automatiquement si isArchived est true
+taskSchema.pre('save', function(next) {
+  try {
+    if (this.isArchived === true) {
+      this.status = 'archived';
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 const Task = mongoose.model("Task", taskSchema);
 export default Task;

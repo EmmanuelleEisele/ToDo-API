@@ -94,26 +94,21 @@ export const taskController = {
   async getTasks(req, res, next) {
     try {
       const userId = req.user.id;
-      const tasks = await Task.find({ userId: userId });
-
-      const now = new Date();
-      const overdueTasks = [];
-
-      for (const task of tasks) {
-        if (
-          task.deadline &&
-          new Date(task.deadline) < now &&
-          task.status !== "overdue" &&
-          !task.isDone
-        ) {
-          task.status = "overdue";
-          await task.save();
-          overdueTasks.push(task._id);
-        }
-      }
-
+      const tasks = await Task.find({ userId: userId});
       res.status(200).json({
         message: "Liste des tâches récupérée avec succès",
+        data: tasks,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  async getArchivedTasks(req, res, next) {
+    try {
+      const userId = req.user.id;
+      const tasks = await Task.find({ userId: userId, isArchived: true });
+      res.status(200).json({
+        message: "Liste des tâches archivées récupérée avec succès",
         data: tasks,
       });
     } catch (error) {
@@ -193,6 +188,22 @@ export const taskController = {
       }
 
       res.status(200).json({ message: "Tâche supprimée avec succès" });
+    } catch (error) {
+      next(error);
+    }
+  },
+  async archiveTask(req, res, next) {
+    try {
+      const userId = req.user.id;
+      const taskId = req.params.id;
+      const task = await Task.findOne({ _id: taskId, userId: userId });
+
+      if (!task) {
+        return next(new NotFoundError("Tâche non trouvée"));
+      }
+      task.isArchived = true;
+      await task.save();
+      res.status(200).json({ message: "Tâche archivée avec succès" });
     } catch (error) {
       next(error);
     }

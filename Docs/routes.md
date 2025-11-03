@@ -10,9 +10,12 @@
 ||TACHES||
 | GET | /tasks | lister les tâches de l'utilisateur (auth required) |
 | GET | /tasks/{id} | Récupérer une tâche |
+| GET | /tasks/archived | Récupérer les tâches archivées|
 | POST | /tasks | créer une tâche |
+| POST | /tasks/:id/archive | mettre une tâche en archivé |
 | PUT | /tasks/{id} | modifier une tâche |
 | DELETE | /tasks/{id}| supprimer une tâche |
+
 ||CATEGORIES|
 | POST | /categories | Créer une nouvelle catégorie |
 ||STATS|

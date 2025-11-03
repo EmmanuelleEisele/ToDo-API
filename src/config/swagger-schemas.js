@@ -131,6 +131,10 @@
  *           type: string
  *           description: ID de la catégorie associée
  *           example: "507f1f77bcf86cd799439022"
+ *         isArchived:
+ *           type: boolean
+ *           description: Indique si la tâche est archivée
+ *           example: false
  *         deadline:
  *           type: string
  *           format: date
