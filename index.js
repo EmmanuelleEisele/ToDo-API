@@ -44,7 +44,9 @@ app.use(cors({
 
 // Middlewares de sécurité globaux
 app.use(securityHeaders);
-app.use(basicRateLimit);
+if (process.env.NODE_ENV === 'production') {
+  app.use(basicRateLimit);
+}
 app.use(securityLogger);
 app.use(preventUserEnumeration);
 

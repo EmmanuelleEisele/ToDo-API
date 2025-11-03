@@ -1,12 +1,22 @@
 import Task from "../models/Task.js";
+import mongoose from "mongoose";
 
 export const statsController = {
   // Tâches accomplies par jour
   async completedTasksByDay(req, res, next) {
     try {
-      const userId = req.user.id;
+      const userId = new mongoose.Types.ObjectId(req.user.id);
+      const today = new Date();
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(today.getDate() - 30);
       const result = await Task.aggregate([
-        { $match: { userId: Task.schema.path('userId').instance === 'ObjectID' ? userId : userId.toString(), isDone: true, completedAt: { $ne: null } } },
+        { $match: {
+            userId,
+            isDone: true,
+            completedAt: { $gte: thirtyDaysAgo, $lte: today },
+            isArchived: false
+          }
+        },
         {
           $group: {
             _id: {
@@ -19,6 +29,7 @@ export const statsController = {
         },
         { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
       ]);
+      console.log(result);
       res.status(200).json({ stats: result });
     } catch (error) {
       next(error);
@@ -26,9 +37,9 @@ export const statsController = {
   },
   async completedTasksByWeek(req, res, next) {
     try {
-      const userId = req.user.id;
+      const userId = new mongoose.Types.ObjectId(req.user.id);
       const result = await Task.aggregate([
-        { $match: { userId: Task.schema.path('userId').instance === 'ObjectID' ? userId : userId.toString(), isDone: true, completedAt: { $ne: null } } },
+        { $match: { userId, isDone: true, completedAt: { $ne: null }, isArchived: false } },
         {
           $group: {
             _id: {
@@ -40,6 +51,7 @@ export const statsController = {
         },
         { $sort: { "_id.year": 1, "_id.week": 1 } }
       ]);
+      console.log(result);
       res.status(200).json({ stats: result });
     } catch (error) {
       next(error);
@@ -48,9 +60,9 @@ export const statsController = {
   // Tâches accomplies par mois
   async completedTasksByMonth(req, res, next) {
     try {
-      const userId = req.user.id;
+      const userId = new mongoose.Types.ObjectId(req.user.id);
       const result = await Task.aggregate([
-        { $match: { userId: Task.schema.path('userId').instance === 'ObjectID' ? userId : userId.toString(), isDone: true, completedAt: { $ne: null } } },
+        { $match: { userId, isDone: true, completedAt: { $ne: null }, isArchived: false } },
         {
           $group: {
             _id: {
@@ -62,6 +74,7 @@ export const statsController = {
         },
         { $sort: { "_id.year": 1, "_id.month": 1 } }
       ]);
+      console.log(result);
       res.status(200).json({ stats: result });
     } catch (error) {
       next(error);
@@ -70,9 +83,9 @@ export const statsController = {
   // Tâches accomplies par année
   async completedTasksByYear(req, res, next) {
     try {
-      const userId = req.user.id;
+      const userId = new mongoose.Types.ObjectId(req.user.id);
       const result = await Task.aggregate([
-        { $match: { userId: Task.schema.path('userId').instance === 'ObjectID' ? userId : userId.toString(), isDone: true, completedAt: { $ne: null } } },
+        { $match: { userId, isDone: true, completedAt: { $ne: null }, isArchived: false } },
         {
           $group: {
             _id: { year: { $year: "$completedAt" } },
@@ -81,6 +94,7 @@ export const statsController = {
         },
         { $sort: { "_id.year": 1 } }
       ]);
+      console.log(result);
       res.status(200).json({ stats: result });
     } catch (error) {
       next(error);

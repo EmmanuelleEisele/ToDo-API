@@ -297,4 +297,87 @@ router.delete("/:id",
   taskController.deleteTask
 );
 
+/**
+ * @swagger
+ * /tasks/archived:
+ *   get:
+ *     summary: Récupérer toutes les tâches archivées de l'utilisateur connecté
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste des tâches archivées récupérée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Liste des tâches archivées récupérée avec succès"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Task'
+ *       401:
+ *         description: Token manquant ou invalide
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get("/archived", 
+  auth, 
+  sanitized,
+  taskController.getArchivedTasks
+);
+
+/**
+ * @swagger
+ * /tasks/{id}/archive:
+ *   post:
+ *     summary: Archiver une tâche
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "507f1f77bcf86cd799439011"
+ *         description: ID de la tâche à archiver
+ *     responses:
+ *       200:
+ *         description: Tâche archivée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Tâche archivée avec succès"
+ *       404:
+ *         description: Tâche non trouvée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Token manquant ou invalide
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.post("/:id/archive",
+  validateObjectId(),
+  auth,
+  sanitized,
+  taskController.archiveTask
+);
+
 export default router;
