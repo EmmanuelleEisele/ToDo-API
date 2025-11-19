@@ -1,10 +1,5 @@
 import validator from "validator";
 
-/**
- * Middleware de sanitisation des entrées utilisateur
- * Nettoie et valide les données pour prévenir les attaques XSS, NoSQL injection, etc.
- */
-
 // Fonction utilitaire pour nettoyer une chaîne
 const sanitizeString = (str) => {
   if (typeof str !== "string") return str;
@@ -16,7 +11,6 @@ const sanitizeString = (str) => {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#x27;")
       .replace(/\//g, "&#x2F;")
       // Supprimer les caractères de contrôle
       .replace(/[\x00-\x1f\x7f-\x9f]/g, "")
