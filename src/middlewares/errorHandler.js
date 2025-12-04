@@ -81,6 +81,11 @@ const sendErrorProd = (err, res) => {
   }
 };
 
+export default function errorHandler(err, req, res, next) {
+  res.status(err.statusCode || 500).json({
+    message: err.message || "Erreur serveur",
+  });
+}
 /**
  * Middleware principal de gestion d'erreurs
  */
