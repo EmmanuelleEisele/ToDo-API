@@ -2,8 +2,21 @@ import { Router } from "express";
 import { tokenController } from "../controllers/tokenController.js";
 import { auth } from "../middlewares/auth.js";
 import { sanitized } from "../middlewares/sanitization.js";
+import User from "../models/User.js";
 
 const tokenRouter = Router();
+// Vérification du token d'accès et récupération de l'utilisateur connecté
+tokenRouter.get("/", auth, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+    res.json({ user });
+  } catch (error) {
+    next(error);
+  }
+});
 
 /**
  * @swagger
