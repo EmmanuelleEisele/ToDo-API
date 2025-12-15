@@ -26,9 +26,6 @@ export const authController = {
         return next(new ValidationError("Les mots de passe ne correspondent pas"));
       }
 
-      if (password !== valitadePassword) {
-        return next(new ValidationError("Le mot de passe doit respecter les critères de sécurité"));
-      }
       //hashage du mot de passe
       const hashedPassword = await argon2.hash(password);
 

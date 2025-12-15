@@ -2,8 +2,9 @@
 import { Router } from "express";
 import { authController } from "../controllers/authController.js";
 import { sanitizeInput, sanitized, limitDataSize } from "../middlewares/sanitization.js";
-import { validatePassword } from "../middlewares/passwordValidator.js";
+import { checkPasswordStrength, validatePassword } from "../middlewares/passwordValidator.js";
 import { auth } from "../middlewares/auth.js";
+import { check } from "express-validator";
 
 const router = Router();
 
@@ -212,6 +213,7 @@ router.post("/register",
   limitDataSize(10 * 1024), // 10KB max pour registration
   sanitizeInput({ type: 'user' }),
   validatePassword,
+  checkPasswordStrength,
   authController.registerUser
 );
 
