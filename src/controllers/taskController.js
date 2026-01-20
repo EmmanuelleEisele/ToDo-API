@@ -94,7 +94,7 @@ export const taskController = {
   async getTasks(req, res, next) {
     try {
       const userId = req.user.id;
-      const tasks = await Task.find({ userId: userId});
+      const tasks = await Task.find({ userId: userId }).sort({ createdAt: -1 });
       res.status(200).json({
         message: "Liste des tâches récupérée avec succès",
         data: tasks,
@@ -106,7 +106,7 @@ export const taskController = {
   async getArchivedTasks(req, res, next) {
     try {
       const userId = req.user.id;
-      const tasks = await Task.find({ userId: userId, isArchived: true });
+      const tasks = await Task.find({ userId: userId, isArchived: true }).sort({ createdAt: -1 });
       res.status(200).json({
         message: "Liste des tâches archivées récupérée avec succès",
         data: tasks,
